@@ -1,0 +1,143 @@
+{
+  "name": "Vinicius Dias Barros",
+  "title": "Data Architect Consultant",
+  "about": "I’m a Data Engineering Lead with extensive experience in designing scalable data architectures and optimizing end-to-end data workflows. My expertise lies in orchestrating robust pipelines using tools such as Databricks (Auto Loader, Delta Live Tables, streaming pipelines, Unity Catalog, and Liquid Clustering) and Microsoft Fabric (Dataflows, Pipelines, and OneLake integration). I specialize in building reliable ingestion frameworks, real-time data processing solutions, and implementing governance strategies that support data democratization and regulatory compliance, including GDPR.",
+  "linkedin": "https://www.linkedin.com/in/vinicius-d-2a9b2488/",
+  "education": [
+    {
+      "degree": "Postgraduate degree - MBA, Machine Learning",
+      "institution": "Instituto de Gestão e Tecnologia da Informação",
+      "years": "2021 - 2022"
+    },
+    {
+      "degree": "Master of Business Administration - MBA, Datascience & Big Data",
+      "institution": "FIAP",
+      "years": "2019 - 2020"
+    },
+    {
+      "degree": "Engineering at Industry Automation",
+      "institution": "Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP",
+      "years": "2014 - 2018"
+    }
+  ],
+  "tech_stack": {
+    "Programming Languages": [
+      {"name": "Python", "years": "8 yrs"},
+      {"name": "SQL", "years": "8 yrs"},
+      {"name": "R", "years": "3 yrs"}
+    ],
+    "Cloud Technologies": [
+      {"name": "Azure", "years": "6 yrs"},
+      {"name": "GCP", "years": "3 yrs"}
+    ],
+    "Tools": [
+      {"name": "GIT", "years": "7 yrs"},
+      {"name": "Azure Data Factory", "years": "6 yrs"},
+      {"name": "Databricks", "years": "5 yrs"},
+      {"name": "Spark", "years": "5 yrs"},
+      {"name": "Power Bi", "years": "5 yrs"}
+    ],
+    "Databases": [
+      {"name": "SQL Server", "years": "8 yrs"},
+      {"name": "PostgreSQL", "years": "8 yrs"},
+      {"name": "Google BigQuery", "years": "3 yrs"},
+      {"name": "MongoDB", "years": "2 yrs"}
+    ],
+    "Operating Systems": [
+      {"name": "Windows", "years": "8 yrs"},
+      {"name": "Linux", "years": "7 yrs"}
+    ],
+    "Development Methods": [
+      {"name": "Scrum", "years": "8 yrs"},
+      {"name": "Agile", "years": "8 yrs"},
+      {"name": "DevOps", "years": "3 yrs"}
+    ]
+  },
+  "certificates": [
+    {"name": "Neo4j Certified Professional", "year": "2025"},
+    {"name": "EDW-ETL Migration to the Data Intelligence Platform", "year": "2025"},
+    {"name": "SAP Databricks GTM Foundations", "year": "2025"},
+    {"name": "Advantages of Azure Databricks & Microsoft Fabric", "year": "2025"},
+    {"name": "Data & AI Governance with Unity Catalog", "year": "2025"},
+    {"name": "Financial Services Industry Specialization for Gen AI & LLM", "year": "2025"},
+    {"name": "Databricks Certified Data Engineer Associate", "year": "2024"},
+    {"name": "DP 203 – Microsoft Azure Data Engineer Associate", "year": "2023"},
+    {"name": "DBT Fundamentals", "year": "2023"}
+  ],
+  "experience": [
+    {
+      "company": "WAES",
+      "title": "Data Architect",
+      "period": "May 2025 - Present",
+      "location": "Eindhoven, the Netherlands",
+      "technologies": ["Databricks", "Python", "SQL", "Airflow", "AWS (Data Services)", "DBT", "Docker", "Apache Spark", "Terraform"],
+      "highlights": [
+        "Segmented and tailored data & AI solution materials for sales and pre-sales teams.",
+        "Built targeted demos on governance, lakehouse architecture, and cloud migration.",
+        "Built OCR system to unify appointment data for analytics.",
+        "Established strategic partnerships with AWS and Databricks."
+      ]
+    },
+    {
+      "company": "Carlsberg Group",
+      "title": "Senior Data Engineer",
+      "period": "Oct 2023 - Apr 2025",
+      "location": "Lisbon, Portugal",
+      "technologies": ["Azure Data Factory", "Databricks", "SQL Server", "Stored Procedures", "Python", "Power BI", "Git", "DevOps"],
+      "highlights": [
+        "Led new analytics use cases on Carlsberg Analytics Platform across 9 markets.",
+        "Managed a team of 7 Data Engineers and 1 Business Analyst.",
+        "Reduced OLAP cube costs by 30%.",
+        "Built monitoring and alerting app for pipelines."
+      ]
+    },
+    {
+      "company": "Reckitt",
+      "title": "Senior Data Engineer",
+      "period": "Sep 2022 - Sep 2023",
+      "location": "Lisbon, Portugal",
+      "technologies": ["Azure", "Azure ADF", "Azure Data Factory", "SQL Server", "Stored Procedures", "Databricks"],
+      "highlights": [
+        "Designed modern data architecture for logistics with Databricks & Delta Lake.",
+        "Implemented KPIs for sales reporting using SQL and Power BI.",
+        "Unified siloed data marts via governance model with Unity Catalog."
+      ]
+    },
+    {
+      "company": "Santander",
+      "title": "Senior Data Engineer",
+      "period": "Feb 2021 - Aug 2022",
+      "location": "São Paulo, Brazil",
+      "technologies": ["Azure Data Factory", "Databricks", "SQL Server", "MongoDB", "Cassandra"],
+      "highlights": [
+        "Built scalable data ingestion model for Open Finance and internal sources.",
+        "Integrated unstructured data systems (MongoDB, Cassandra).",
+        "Implemented LGPD-compliant data handling processes."
+      ]
+    },
+    {
+      "company": "ClearSale",
+      "title": "Data Engineer",
+      "period": "Feb 2020 - Jan 2021",
+      "location": "São Paulo, Brazil",
+      "technologies": ["Azure Data Factory", "Databricks", "SQL Server", "Power BI", "Python"],
+      "highlights": [
+        "Built smart fraud detection routines, reducing false positives.",
+        "Achieved 20% faster data processing via SQL optimization.",
+        "Migrated data marts to Azure and Databricks."
+      ]
+    },
+    {
+      "company": "Wipro",
+      "title": "Data Engineer",
+      "period": "Jul 2016 - Jan 2020",
+      "location": "São Paulo, Brazil",
+      "technologies": ["SQL", "Oracle", "Power BI", "PL/SQL"],
+      "highlights": [
+        "Optimized critical legacy views and reduced incidents.",
+        "Improved ETL processes and reduced latency.",
+        "Enhanced Power BI dashboards for operational visibility."
+      ]
+    }
+  ]
+}

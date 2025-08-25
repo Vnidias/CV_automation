@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Professional CV — Vue + Tailwind</title>
+  <meta name="color-scheme" content="dark">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+  /* Print */
+  @page { size: A4; margin: 0; }
+  :root { --sheet-margin: 1.5cm; }
+  .sheet { max-width: 100%; padding: var(--sheet-margin); }
+  @media print {
+    html, body { background:#0f172a!important; color:#e5e7eb!important;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
+    .no-print{display:none!important} .sticky{position:static!important}
+    .page{page-break-after:always}.page:last-child{page-break-after:auto}
+    .print-hide{display:none!important} .section{break-inside:avoid;page-break-inside:avoid}
+    .shadow,.ring{box-shadow:none!important}
+    /* ensure visible in print */
+    .anim-init,.anim-in{opacity:1!important;transform:none!important}
+  }
+
+  /* ===== Scroll animations ===== */
+  .anim-init { opacity: 0; transform: translateY(14px); }
+  .anim-in   { opacity: 1; transform: translateY(0); }
+  .anim-t    { transition: opacity .6s cubic-bezier(.22,.61,.36,1),
+                        transform .6s cubic-bezier(.22,.61,.36,1); }
+
+  /* effect modifiers ON THE SAME ELEMENT */
+  .fx-fade-up.anim-init    { transform: translateY(14px); }
+  .fx-fade-left.anim-init  { transform: translateX(-16px); }
+  .fx-fade-right.anim-init { transform: translateX(16px); }
+  .fx-zoom-in.anim-init    { transform: scale(.98); }
+
+  /* stagger */
+  [data-animate-child] { transition-delay: var(--d, 0ms)!important; }
+
+  /* small avatar intro */
+  @keyframes avatarPop{0%{transform:scale(.94);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .anim-init,.anim-in{opacity:1!important;transform:none!important}
+    .anim-t{transition:none!important}.avatar-pop{animation:none!important}
+  }
+</style>
+
+</head>
+
+<body class="bg-gray-900 text-gray-100 antialiased">
+  <div id="app">
+    <!-- Minimal top bar -->
+    <header class="no-print sticky top-0 z-50 border-b border-gray-800/60 bg-gray-900/80 backdrop-blur">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-end">
+        <button @click="exportPdf"
+          class="px-3 py-1.5 rounded-lg border border-gray-700 text-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600/40 active:scale-[.98]">
+          Export PDF
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===== Page 1: About + Education + Certificates ===== -->
+      <section class="page">
+        <div class="sheet max-w-5xl mx-auto">
+
+          <!-- About (with Tech Focus + Contact) -->
+          <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section fx-fade-up anim-t anim-init"
+               v-animate data-animate="fade-up">
+            <div class="flex items-start gap-4">
+              <img :src="avatarUrl" alt="Profile photo"
+                   class="h-20 w-20 rounded-full object-cover ring-2 ring-indigo-400/20 avatar-pop"
+                   style="animation: avatarPop .5s ease-out .05s both;">
+              <div class="flex-1">
+                <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">{{ cv.name }}</h1>
+                <p class="mt-1 text-lg sm:text-xl text-indigo-400 font-semibold">{{ cv.title }}</p>
+                <p class="mt-4 text-gray-300 leading-relaxed" v-html="cv.about"></p>
+
+                <div class="mt-6">
+                  <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Tech Focus</h2>
+                  <p class="mt-2 text-xs sm:text-sm text-gray-300">
+                    Databricks • Spark • Python • SQL • Governance • Microsoft Fabric
+                  </p>
+                </div>
+
+                <div class="mt-6">
+                  <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Contact</h2>
+                  <div class="mt-3 space-y-2 text-sm">
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0H5C3.346 0 2 1.346 2 3v18c0 1.654 1.346 3 3 3h14c1.654 0 3-1.346 3-3V3c0-1.654-1.346-3-3-3zm-3.293 8.293-4.293 4.293-1.707-1.707-1.414 1.414 2.121 2.121a1 1 0 0 0 1.414 0l5-5-1.121-1.121z"/></svg>
+                      <a :href="cv.linkedin" target="_blank" rel="noopener" class="text-indigo-400 hover:underline">LinkedIn</a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Education + Certificates (staggered children) -->
+          <div class="grid md:grid-cols-2 gap-6 mt-6"
+               v-animate.group data-animate="fade-up" data-stagger="90">
+            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
+                 data-animate-child>
+              <h2 class="text-lg font-semibold">Education</h2>
+              <ul class="mt-3 space-y-3">
+                <li v-for="(e, i) in cv.education" :key="i" class="anim-t anim-init fx-fade-up" data-animate-child>
+                  <p class="font-medium">{{ e.degree }}</p>
+                  <p class="text-sm text-gray-400">{{ e.institution }}</p>
+                  <p class="text-xs text-gray-500">{{ e.years }}</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
+                 data-animate-child>
+              <h2 class="text-lg font-semibold">Certificates</h2>
+              <ul class="mt-3 grid grid-cols-1 gap-2">
+                <li v-for="(c, i) in cv.certificates" :key="i"
+                    class="flex items-center justify-between border border-gray-700 rounded-lg px-3 py-2 anim-t anim-init fx-fade-up"
+                    data-animate-child>
+                  <span class="text-sm">{{ c.name }}</span>
+                  <span class="text-xs text-gray-400">{{ c.year }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tech Stack (screen only; hidden in print) -->
+          <div class="print-hide mt-6">
+            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
+                 v-animate data-animate="fade-up">
+              <h2 class="text-lg font-semibold">Tech Stack</h2>
+              <div class="mt-4 grid md:grid-cols-2 gap-6" v-animate.group data-animate="fade-up" data-stagger="50">
+                <div v-for="(items, group) in cv.tech_stack" :key="group"
+                     class="anim-t anim-init fx-fade-up" data-animate-child>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-400">{{ group }}</h3>
+                  <ul class="mt-2 flex flex-wrap gap-2">
+                    <li v-for="tool in items" :key="tool.name"
+                        class="text-sm px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800/60 hover:bg-gray-800 anim-t anim-init fx-fade-up"
+                        data-animate-child>
+                      <span class="font-medium">{{ tool.name }}</span>
+                      <span class="opacity-70">• {{ tool.years }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== Page 2+: Experience ===== -->
+      <section class="page">
+        <div class="sheet max-w-5xl mx-auto">
+          <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
+               v-animate data-animate="fade-up">
+            <h2 class="text-lg font-semibold">Experience</h2>
+
+            <!-- Stagger each job; keep dot aligned via inner child wrapper -->
+            <ol class="mt-4 border-s border-gray-800" v-animate.group data-animate="fade-up" data-stagger="80">
+              <li v-for="(job, idx) in cv.experience" :key="idx"
+                  class="relative ps-6 py-6 break-inside-avoid">
+                <!-- Dot centered on the line -->
+                <span class="absolute left-0 -translate-x-1/2 top-2 h-3 w-3 rounded-full bg-indigo-500"></span>
+
+                <!-- Inner wrapper animates, not the LI -->
+                <div class="anim-t anim-init fx-fade-up" data-animate-child>
+                  <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <div>
+                      <h3 class="font-semibold text-base">
+                        {{ job.title }} • <span class="text-gray-300">{{ job.company }}</span>
+                      </h3>
+                      <p class="text-sm text-gray-400">{{ job.location }}</p>
+                    </div>
+                    <div class="text-sm text-gray-400">{{ job.period }}</div>
+                  </div>
+
+                  <div class="mt-2 flex flex-wrap gap-1">
+                    <span v-for="t in job.technologies" :key="t"
+                          class="text-xs px-2 py-0.5 rounded-full bg-gray-800 border border-gray-700">
+                      {{ t }}
+                    </span>
+                  </div>
+
+                  <ul class="mt-3 list-disc ms-5 space-y-1.5">
+                    <li v-for="(h, hIdx) in job.highlights" :key="hIdx" class="leading-relaxed text-gray-200">
+                      {{ h }}
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+  const { createApp, ref, computed, onMounted, nextTick } = Vue;
+
+  createApp({
+    setup() {
+      const cv = ref({
+        name: '', title: '', about: '', linkedin: '', photo: '',
+        education: [], tech_stack: {}, certificates: [], experience: []
+      });
+
+      const avatarUrl = computed(() => cv.value.photo || 'profile.jpg');
+      const exportPdf = () => window.print();
+
+      const loadData = async () => {
+        const res = await fetch('vinicius.json', { cache: 'no-store' });
+        cv.value = await res.json();
+        // After data injects, give Vue a tick so nodes are in the DOM
+        await nextTick();
+        // Kick observers (some browsers won’t fire for already-in-view nodes)
+        window.dispatchEvent(new Event('scroll'));
+      };
+
+      onMounted(loadData);
+
+      return { cv, avatarUrl, exportPdf };
+    },
+
+    directives: {
+      /* v-animate + v-animate.group
+         - Replays on enter/leave
+         - Registers dynamically-added children via MutationObserver
+         Usage:
+           v-animate                              -> animate element
+           v-animate.group data-stagger="60"      -> stagger [data-animate-child] descendants
+           data-animate="fade-up|fade-left|fade-right|zoom-in" (optional)
+           data-delay="120" per-element delay (optional)
+           v-animate.once                         -> reveal once, don’t hide on leave
+      */
+      animate: {
+        mounted(el, binding) {
+          if (window.matchMedia('print').matches) return; // no animations in print
+
+          const once     = !!binding.modifiers.once;
+          const isGroup  = !!binding.modifiers.group;
+          const effect   = (el.dataset.animate || 'fade-up').toLowerCase();
+          const step     = isGroup ? parseInt(el.dataset.stagger || '60', 10) : 0;
+
+          // One IntersectionObserver for this directive instance
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach(({ isIntersecting, target }) => {
+              if (isIntersecting) {
+                target.classList.add('anim-in');
+                target.classList.remove('anim-init');
+                if (once) io.unobserve(target);
+              } else if (!once) {
+                target.classList.remove('anim-in');
+                target.classList.add('anim-init');
+              }
+            });
+          }, { threshold: 0.12, root: null, rootMargin: '0px 0px -10% 0px' });
+
+          // Prepare + observe a node safely (only once)
+          const prepAndObserve = (node, idx = 0) => {
+            if (!node || node.__animPrepared) return;
+            const nodeEff = (node.dataset.animate || effect).toLowerCase();
+            const delay   = node.dataset.delay ? parseInt(node.dataset.delay, 10) : idx * step;
+
+            node.classList.add('anim-t', 'anim-init', `fx-${nodeEff}`);
+            if (!node.style.transitionDelay) node.style.transitionDelay = `${delay}ms`;
+
+            node.__animPrepared = true;
+            io.observe(node);
+
+            // Immediate state if already in view
+            const r = node.getBoundingClientRect();
+            const inView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.1;
+            if (inView) { node.classList.add('anim-in'); node.classList.remove('anim-init'); }
+          };
+
+          // Initial registration
+          if (isGroup) {
+            const kids = el.querySelectorAll('[data-animate-child]');
+            kids.forEach((k, i) => prepAndObserve(k, i));
+          } else {
+            prepAndObserve(el, 0);
+          }
+
+          // Observe future children (critical for v-for content added after fetch)
+          if (isGroup) {
+            const mo = new MutationObserver((mutations) => {
+              mutations.forEach(m => {
+                m.addedNodes && m.addedNodes.forEach(n => {
+                  if (!(n instanceof Element)) return;
+                  if (n.matches && n.matches('[data-animate-child]')) {
+                    // index 0; visual stagger still looks fine on late nodes
+                    prepAndObserve(n, 0);
+                  }
+                  // Also handle descendants of a newly added subtree
+                  n.querySelectorAll && n.querySelectorAll('[data-animate-child]').forEach(d => prepAndObserve(d, 0));
+                });
+              });
+            });
+            mo.observe(el, { childList: true, subtree: true });
+            el.__animMO = mo;
+          }
+
+          // Keep references for cleanup
+          el.__animIO = io;
+
+          // Nudge the IO on load/resize/scroll to resolve initial state
+          const poke = () => io.takeRecords().forEach(({ target }) => io.observe(target));
+          window.addEventListener('resize', poke, { passive: true });
+          window.addEventListener('scroll', poke, { passive: true });
+          el.__animPoke = poke;
+        },
+
+        unmounted(el) {
+          el.__animIO?.disconnect();
+          el.__animMO?.disconnect();
+          window.removeEventListener('resize', el.__animPoke || (()=>{}));
+          window.removeEventListener('scroll', el.__animPoke || (()=>{}));
+        }
+      }
+    }
+  }).mount('#app');
+</script>
+
+
+
+</body>
+</html>
