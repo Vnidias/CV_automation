@@ -292,8 +292,3 @@ Run `python app.py` instead of opening `index.html` directly from the filesystem
 
 MIT. Do what you want; attribution appreciated.
 
----
-
-**Q1:** Should Tech Stack also print on Page 1 when it fits (auto-spill to Page 2 otherwise)?
-**Q2:** Do you want a compact print mode (smaller avatar, tighter paddings) to guarantee a strict one-page About/Education/Certificates?
-**Q3:** Add an optional email/phone/location to the JSON and render matching icons in Contact?

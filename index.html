@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Professional CV — Vue + Tailwind</title>
+  <title>CV Generator - Upload & Create</title>
   <meta name="color-scheme" content="dark">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -11,327 +11,617 @@
   </script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <style>
-  /* Print */
-  @page { size: A4; margin: 0; }
-  :root { --sheet-margin: 1.5cm; }
+  /* Base styling */
+  :root { --sheet-margin: 1.2cm; }
   .sheet { max-width: 100%; padding: var(--sheet-margin); }
+
+  /* Dark cards */
+  .card-surface {
+    border-radius: 1rem;
+    border: 1px solid rgba(51,65,85,.7);
+    background: rgba(30,41,59,.7);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.05) inset;
+  }
+
+  /* Drag and drop styling */
+  .drag-over {
+    border-color: #60a5fa !important;
+    background-color: rgba(96, 165, 250, 0.1) !important;
+  }
+
+  /* Print styles */
+  @page { 
+    size: A4; 
+    margin: 0 !important;
+    background: #0f172a;
+    color: #e5e7eb;
+  }
+  
   @media print {
-    html, body { background:#0f172a!important; color:#e5e7eb!important;
-      -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
-    .no-print{display:none!important} .sticky{position:static!important}
-    .page{page-break-after:always}.page:last-child{page-break-after:auto}
-    .print-hide{display:none!important} .section{break-inside:avoid;page-break-inside:avoid}
-    .shadow,.ring{box-shadow:none!important}
-    /* ensure visible in print */
-    .anim-init,.anim-in{opacity:1!important;transform:none!important}
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    
+    html, body {
+      background: #0f172a !important;
+      color: #e5e7eb !important;
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+    }
+
+    @page {
+      margin: 0 !important;
+      size: A4;
+      background: #0f172a !important;
+    }
+    
+    body::before, body::after,
+    html::before, html::after {
+      display: none !important;
+      content: none !important;
+    }
+    
+    @top-left, @top-center, @top-right,
+    @bottom-left, @bottom-center, @bottom-right {
+      content: none !important;
+    }
+
+    .no-print { display: none !important; }
+    .sticky { position: static !important; }
+
+    .page {
+      page-break-after: always;
+      break-after: page;
+      min-height: calc(100vh - 2cm);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    .sheet {
+      height: auto !important;
+      min-height: calc(297mm - 1cm);
+      box-sizing: border-box;
+      padding: 0.8cm !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .max-w-5xl {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+    }
+
+    .card-surface {
+      background: #1e293b !important;
+      border: 1px solid #475569 !important;
+      box-shadow: none !important;
+      margin-bottom: 1rem !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .section {
+      padding: 1rem !important;
+    }
+
+    .mt-6 {
+      margin-top: 0.75rem !important;
+    }
+
+    .grid.gap-6 {
+      gap: 0.75rem !important;
+    }
+
+    h1 {
+      font-size: 24px !important;
+      font-weight: 800 !important;
+      line-height: 1.2 !important;
+      margin-bottom: 0.5rem !important;
+    }
+    
+    h2 {
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      margin-bottom: 0.75rem !important;
+    }
+    
+    h3 {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+    }
+
+    p, li {
+      font-size: 11px !important;
+      line-height: 1.4 !important;
+    }
+
+    img[alt="Profile photo"] {
+      height: 4rem !important;
+      width: 4rem !important;
+      border-radius: 50% !important;
+    }
+
+    .experience-item {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.2rem !important;
+      padding-left: 1rem !important;
+      border-left: 2px solid #60a5fa !important;
+      position: relative !important;
+    }
+
+    .experience-item .absolute {
+      position: absolute !important;
+      left: -8px !important;
+      top: 0 !important;
+      width: 14px !important;
+      height: 14px !important;
+      background: #60a5fa !important;
+      border: 2px solid #0f172a !important;
+      border-radius: 50% !important;
+    }
+
+    .experience-item h3 {
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      line-height: 1.3 !important;
+      margin-bottom: 0.3rem !important;
+      color: #f3f4f6 !important;
+    }
+
+    .experience-item .text-gray-300 {
+      color: #d1d5db !important;
+      font-size: 11px !important;
+    }
+
+    .experience-item .text-gray-400 {
+      color: #9ca3af !important;
+      font-size: 10px !important;
+    }
+
+    .tech-badge {
+      font-size: 9px !important;
+      padding: 0.2rem 0.4rem !important;
+      margin: 0.1rem 0.2rem 0.1rem 0 !important;
+      background: #475569 !important;
+      border: 1px solid #64748b !important;
+      color: #e2e8f0 !important;
+      border-radius: 0.25rem !important;
+      display: inline-block !important;
+    }
+
+    .experience-item ul {
+      margin-top: 0.5rem !important;
+      margin-left: 0.5rem !important;
+      list-style: none !important;
+    }
+
+    .experience-item ul li {
+      font-size: 10px !important;
+      line-height: 1.4 !important;
+      margin-bottom: 0.25rem !important;
+      color: #d1d5db !important;
+      position: relative !important;
+      padding-left: 0 !important;
+    }
+
+    .experience-item ul li::before {
+      content: "•" !important;
+      color: #60a5fa !important;
+      font-weight: bold !important;
+      position: absolute !important;
+      left: -1rem !important;
+    }
+
+    .space-y-6 > * + * {
+      margin-top: 1rem !important;
+    }
+
+    .text-indigo-400 {
+      color: #60a5fa !important;
+    }
+
+    .text-gray-300 {
+      color: #d1d5db !important;
+    }
+
+    .text-gray-400 {
+      color: #9ca3af !important;
+      font-size: 10px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    .text-gray-500 {
+      color: #6b7280 !important;
+    }
+
+    ul li {
+      margin-bottom: 0.3rem !important;
+    }
+
+    .space-y-3 > * + * {
+      margin-top: 0.5rem !important;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 0.3rem !important;
+    }
+
+    .certificate-item {
+      background: #374151 !important;
+      border: 1px solid #4b5563 !important;
+      padding: 0.5rem !important;
+      margin-bottom: 0.3rem !important;
+      border-radius: 0.5rem !important;
+    }
+
+    .shadow, .ring, .backdrop-blur {
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+    }
+
+    .grid-cols-1 {
+      display: block !important;
+    }
+
+    .md\\:grid-cols-2 {
+      display: block !important;
+    }
+
+    .leading-relaxed {
+      line-height: 1.4 !important;
+    }
   }
-
-  /* ===== Scroll animations ===== */
-  .anim-init { opacity: 0; transform: translateY(14px); }
-  .anim-in   { opacity: 1; transform: translateY(0); }
-  .anim-t    { transition: opacity .6s cubic-bezier(.22,.61,.36,1),
-                        transform .6s cubic-bezier(.22,.61,.36,1); }
-
-  /* effect modifiers ON THE SAME ELEMENT */
-  .fx-fade-up.anim-init    { transform: translateY(14px); }
-  .fx-fade-left.anim-init  { transform: translateX(-16px); }
-  .fx-fade-right.anim-init { transform: translateX(16px); }
-  .fx-zoom-in.anim-init    { transform: scale(.98); }
-
-  /* stagger */
-  [data-animate-child] { transition-delay: var(--d, 0ms)!important; }
-
-  /* small avatar intro */
-  @keyframes avatarPop{0%{transform:scale(.94);opacity:0}100%{transform:scale(1);opacity:1}}
-
-  /* reduced motion */
-  @media (prefers-reduced-motion: reduce){
-    .anim-init,.anim-in{opacity:1!important;transform:none!important}
-    .anim-t{transition:none!important}.avatar-pop{animation:none!important}
-  }
-</style>
-
+  </style>
 </head>
 
 <body class="bg-gray-900 text-gray-100 antialiased">
   <div id="app">
-    <!-- Minimal top bar -->
-    <header class="no-print sticky top-0 z-50 border-b border-gray-800/60 bg-gray-900/80 backdrop-blur">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-end">
-        <button @click="exportPdf"
-          class="px-3 py-1.5 rounded-lg border border-gray-700 text-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600/40 active:scale-[.98]">
-          Export PDF
-        </button>
-      </div>
-    </header>
-
-    <main>
-      <!-- ===== Page 1: About + Education + Certificates ===== -->
-      <section class="page">
-        <div class="sheet max-w-5xl mx-auto">
-
-          <!-- About (with Tech Focus + Contact) -->
-          <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section fx-fade-up anim-t anim-init"
-               v-animate data-animate="fade-up">
-            <div class="flex items-start gap-4">
-              <img :src="avatarUrl" alt="Profile photo"
-                   class="h-20 w-20 rounded-full object-cover ring-2 ring-indigo-400/20 avatar-pop"
-                   style="animation: avatarPop .5s ease-out .05s both;">
-              <div class="flex-1">
-                <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">{{ cv.name }}</h1>
-                <p class="mt-1 text-lg sm:text-xl text-indigo-400 font-semibold">{{ cv.title }}</p>
-                <p class="mt-4 text-gray-300 leading-relaxed" v-html="cv.about"></p>
-
-                <div class="mt-6">
-                  <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Tech Focus</h2>
-                  <p class="mt-2 text-xs sm:text-sm text-gray-300">
-                    Databricks • Spark • Python • SQL • Governance • Microsoft Fabric
-                  </p>
-                </div>
-
-                <div class="mt-6">
-                  <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Contact</h2>
-                  <div class="mt-3 space-y-2 text-sm">
-                    <div class="flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0H5C3.346 0 2 1.346 2 3v18c0 1.654 1.346 3 3 3h14c1.654 0 3-1.346 3-3V3c0-1.654-1.346-3-3-3zm-3.293 8.293-4.293 4.293-1.707-1.707-1.414 1.414 2.121 2.121a1 1 0 0 0 1.414 0l5-5-1.121-1.121z"/></svg>
-                      <a :href="cv.linkedin" target="_blank" rel="noopener" class="text-indigo-400 hover:underline">LinkedIn</a>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- Education + Certificates (staggered children) -->
-          <div class="grid md:grid-cols-2 gap-6 mt-6"
-               v-animate.group data-animate="fade-up" data-stagger="90">
-            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
-                 data-animate-child>
-              <h2 class="text-lg font-semibold">Education</h2>
-              <ul class="mt-3 space-y-3">
-                <li v-for="(e, i) in cv.education" :key="i" class="anim-t anim-init fx-fade-up" data-animate-child>
-                  <p class="font-medium">{{ e.degree }}</p>
-                  <p class="text-sm text-gray-400">{{ e.institution }}</p>
-                  <p class="text-xs text-gray-500">{{ e.years }}</p>
-                </li>
-              </ul>
-            </div>
-
-            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
-                 data-animate-child>
-              <h2 class="text-lg font-semibold">Certificates</h2>
-              <ul class="mt-3 grid grid-cols-1 gap-2">
-                <li v-for="(c, i) in cv.certificates" :key="i"
-                    class="flex items-center justify-between border border-gray-700 rounded-lg px-3 py-2 anim-t anim-init fx-fade-up"
-                    data-animate-child>
-                  <span class="text-sm">{{ c.name }}</span>
-                  <span class="text-xs text-gray-400">{{ c.year }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Tech Stack (screen only; hidden in print) -->
-          <div class="print-hide mt-6">
-            <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
-                 v-animate data-animate="fade-up">
-              <h2 class="text-lg font-semibold">Tech Stack</h2>
-              <div class="mt-4 grid md:grid-cols-2 gap-6" v-animate.group data-animate="fade-up" data-stagger="50">
-                <div v-for="(items, group) in cv.tech_stack" :key="group"
-                     class="anim-t anim-init fx-fade-up" data-animate-child>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-400">{{ group }}</h3>
-                  <ul class="mt-2 flex flex-wrap gap-2">
-                    <li v-for="tool in items" :key="tool.name"
-                        class="text-sm px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800/60 hover:bg-gray-800 anim-t anim-init fx-fade-up"
-                        data-animate-child>
-                      <span class="font-medium">{{ tool.name }}</span>
-                      <span class="opacity-70">• {{ tool.years }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
+    <!-- Upload Interface -->
+    <div v-if="!cvGenerated" class="min-h-screen flex items-center justify-center p-6">
+      <div class="max-w-2xl w-full">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold text-white mb-2">CV Generator</h1>
+          <p class="text-gray-400">Upload your JSON data and photo to generate a professional CV</p>
         </div>
-      </section>
 
-      <!-- ===== Page 2+: Experience ===== -->
-      <section class="page">
-        <div class="sheet max-w-5xl mx-auto">
-          <div class="print-bg-white bg-gray-900/60 rounded-2xl shadow-sm border border-gray-800/60 p-6 section anim-t anim-init fx-fade-up"
-               v-animate data-animate="fade-up">
-            <h2 class="text-lg font-semibold">Experience</h2>
+        <div class="space-y-6">
+          <!-- JSON File Upload -->
+          <div class="card-surface p-6">
+            <h3 class="text-lg font-semibold mb-4">1. Upload JSON Data</h3>
+            <div 
+              @dragover.prevent="dragOver = true"
+              @dragleave.prevent="dragOver = false"
+              @drop.prevent="handleJsonDrop"
+              :class="['border-2 border-dashed rounded-lg p-8 text-center transition-colors', dragOver ? 'drag-over' : 'border-gray-600']"
+            >
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <p class="text-lg mb-2">Drop your JSON file here or</p>
+              <input type="file" @change="handleJsonFile" accept=".json" class="hidden" ref="jsonInput">
+              <button @click="$refs.jsonInput.click()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg">
+                Choose File
+              </button>
+              <p v-if="jsonFileName" class="mt-2 text-green-400">✓ {{ jsonFileName }}</p>
+            </div>
+          </div>
 
-            <!-- Stagger each job; keep dot aligned via inner child wrapper -->
-            <ol class="mt-4 border-s border-gray-800" v-animate.group data-animate="fade-up" data-stagger="80">
-              <li v-for="(job, idx) in cv.experience" :key="idx"
-                  class="relative ps-6 py-6 break-inside-avoid">
-                <!-- Dot centered on the line -->
-                <span class="absolute left-0 -translate-x-1/2 top-2 h-3 w-3 rounded-full bg-indigo-500"></span>
+          <!-- Photo Upload -->
+          <div class="card-surface p-6">
+            <h3 class="text-lg font-semibold mb-4">2. Upload Profile Photo</h3>
+            <div 
+              @dragover.prevent="photoDragOver = true"
+              @dragleave.prevent="photoDragOver = false"
+              @drop.prevent="handlePhotoDrop"
+              :class="['border-2 border-dashed rounded-lg p-8 text-center transition-colors', photoDragOver ? 'drag-over' : 'border-gray-600']"
+            >
+              <div v-if="photoPreview" class="mb-4">
+                <img :src="photoPreview" alt="Preview" class="w-20 h-20 rounded-full mx-auto object-cover">
+              </div>
+              <svg v-else class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <p class="text-lg mb-2">Drop your photo here or</p>
+              <input type="file" @change="handlePhotoFile" accept="image/*" class="hidden" ref="photoInput">
+              <button @click="$refs.photoInput.click()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg">
+                Choose Photo
+              </button>
+              <p v-if="photoFileName" class="mt-2 text-green-400">✓ {{ photoFileName }}</p>
+            </div>
+          </div>
 
-                <!-- Inner wrapper animates, not the LI -->
-                <div class="anim-t anim-init fx-fade-up" data-animate-child>
-                  <div class="flex flex-wrap items-baseline justify-between gap-2">
-                    <div>
-                      <h3 class="font-semibold text-base">
-                        {{ job.title }} • <span class="text-gray-300">{{ job.company }}</span>
-                      </h3>
-                      <p class="text-sm text-gray-400">{{ job.location }}</p>
-                    </div>
-                    <div class="text-sm text-gray-400">{{ job.period }}</div>
+          <!-- Generate Button -->
+          <div class="text-center">
+            <button 
+              @click="generateCV" 
+              :disabled="!jsonData || !photoData"
+              :class="['px-8 py-3 rounded-lg font-semibold text-lg transition-colors', 
+                       (jsonData && photoData) ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 cursor-not-allowed']"
+            >
+              Generate CV
+            </button>
+          </div>
+
+          <!-- Error Messages -->
+          <div v-if="errorMessage" class="bg-red-600/20 border border-red-600 rounded-lg p-4 text-red-200">
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generated CV Display -->
+    <div v-if="cvGenerated">
+      <!-- Control Bar -->
+      <header class="no-print sticky top-0 z-50 border-b border-gray-800/60 bg-slate-800/70 backdrop-blur">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <button @click="goBack" class="px-3 py-1.5 rounded-lg border border-gray-700 text-sm hover:bg-gray-800">
+            ← Back to Upload
+          </button>
+          <button @click="exportPdf" class="px-3 py-1.5 rounded-lg border border-gray-700 text-sm hover:bg-gray-800">
+            Export PDF
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <!-- Page 1: About + Education + Certificates -->
+        <section class="page">
+          <div class="sheet max-w-5xl mx-auto">
+            <!-- About -->
+            <div class="card-surface p-6 section">
+              <div class="flex items-start gap-4">
+                <img :src="photoPreview" alt="Profile photo" class="h-20 w-20 rounded-full object-cover ring-2 ring-indigo-400/20">
+                <div class="flex-1">
+                  <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">{{ cv.name }}</h1>
+                  <p class="mt-1 text-lg sm:text-xl text-indigo-400 font-semibold">{{ cv.title }}</p>
+                  <p class="mt-4 text-gray-300 leading-relaxed" v-html="cv.about"></p>
+
+                  <div class="mt-6">
+                    <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Tech Focus</h2>
+                    <p class="mt-2 text-xs sm:text-sm text-gray-300">
+                      Databricks • Spark • Python • SQL • Governance • Microsoft Fabric
+                    </p>
                   </div>
 
-                  <div class="mt-2 flex flex-wrap gap-1">
-                    <span v-for="t in job.technologies" :key="t"
-                          class="text-xs px-2 py-0.5 rounded-full bg-gray-800 border border-gray-700">
-                      {{ t }}
+                  <div class="mt-6">
+                    <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-400">Contact</h2>
+                    <div class="mt-3 space-y-2 text-sm">
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        <a :href="cv.linkedin" target="_blank" rel="noopener" class="text-indigo-400 hover:underline">LinkedIn</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Education + Certificates -->
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+              <!-- Education -->
+              <div class="card-surface p-6 section">
+                <h2 class="text-lg font-semibold">Education</h2>
+                <ul class="mt-3 space-y-3">
+                  <li v-for="(e, i) in cv.education" :key="i">
+                    <p class="font-medium">{{ e.degree }}</p>
+                    <p class="text-sm text-gray-400">{{ e.institution }}</p>
+                    <p class="text-xs text-gray-500">{{ e.years }}</p>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Certificates -->
+              <div class="card-surface p-6 section">
+                <h2 class="text-lg font-semibold">Certificates</h2>
+                <ul class="mt-3 grid grid-cols-1 gap-2">
+                  <li v-for="(c, i) in cv.certificates" :key="i"
+                      class="certificate-item flex items-center justify-between border border-slate-700/70 bg-slate-800/50 rounded-lg px-3 py-2">
+                    <span class="text-sm">{{ c.name }}</span>
+                    <span class="text-xs text-gray-400">{{ c.year }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Page 2: Experience -->
+        <section class="page">
+          <div class="sheet max-w-5xl mx-auto">
+            <div class="card-surface p-6 section">
+              <h2 class="text-lg font-semibold mb-4">Experience</h2>
+              <div class="space-y-6">
+                <div v-for="(job, idx) in cv.experience" :key="idx"
+                    class="experience-item border-l-2 border-indigo-400 pl-4 relative">
+                  
+                  <div class="absolute -left-2 top-0 w-4 h-4 bg-indigo-400 rounded-full border-2 border-slate-900"></div>
+                  
+                  <div class="mb-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                      <h3 class="text-base font-semibold text-gray-100">{{ job.title }}</h3>
+                      <span class="text-sm text-gray-400">{{ job.period }}</span>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-300">
+                      <span class="font-medium">{{ job.company }}</span>
+                      <span class="hidden sm:inline">•</span>
+                      <span>{{ job.location }}</span>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 flex flex-wrap gap-1">
+                    <span v-for="tech in job.technologies" :key="tech"
+                          class="tech-badge px-2 py-1 text-xs bg-slate-700/80 border border-slate-600 rounded-md text-gray-200">
+                      {{ tech }}
                     </span>
                   </div>
 
-                  <ul class="mt-3 list-disc ms-5 space-y-1.5">
-                    <li v-for="(h, hIdx) in job.highlights" :key="hIdx" class="leading-relaxed text-gray-200">
-                      {{ h }}
+                  <ul class="space-y-1 text-sm text-gray-200 ml-4">
+                    <li v-for="highlight in job.highlights" :key="highlight" 
+                        class="relative before:content-['•'] before:absolute before:-left-4 before:text-indigo-400 before:font-bold">
+                      {{ highlight }}
                     </li>
                   </ul>
                 </div>
-              </li>
-            </ol>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script>
-  const { createApp, ref, computed, onMounted, nextTick } = Vue;
+  const { createApp, ref } = Vue;
 
   createApp({
     setup() {
-      const cv = ref({
-        name: '', title: '', about: '', linkedin: '', photo: '',
-        education: [], tech_stack: {}, certificates: [], experience: []
-      });
+      const cvGenerated = ref(false);
+      const cv = ref({});
+      const jsonData = ref(null);
+      const photoData = ref(null);
+      const photoPreview = ref(null);
+      const jsonFileName = ref('');
+      const photoFileName = ref('');
+      const dragOver = ref(false);
+      const photoDragOver = ref(false);
+      const errorMessage = ref('');
 
-      const avatarUrl = computed(() => cv.value.photo || 'profile.jpg');
-      const exportPdf = () => window.print();
-
-      const loadData = async () => {
-        const res = await fetch('vinicius.json', { cache: 'no-store' });
-        cv.value = await res.json();
-        // After data injects, give Vue a tick so nodes are in the DOM
-        await nextTick();
-        // Kick observers (some browsers won’t fire for already-in-view nodes)
-        window.dispatchEvent(new Event('scroll'));
+      const handleJsonFile = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          processJsonFile(file);
+        }
       };
 
-      onMounted(loadData);
-
-      return { cv, avatarUrl, exportPdf };
-    },
-
-    directives: {
-      /* v-animate + v-animate.group
-         - Replays on enter/leave
-         - Registers dynamically-added children via MutationObserver
-         Usage:
-           v-animate                              -> animate element
-           v-animate.group data-stagger="60"      -> stagger [data-animate-child] descendants
-           data-animate="fade-up|fade-left|fade-right|zoom-in" (optional)
-           data-delay="120" per-element delay (optional)
-           v-animate.once                         -> reveal once, don’t hide on leave
-      */
-      animate: {
-        mounted(el, binding) {
-          if (window.matchMedia('print').matches) return; // no animations in print
-
-          const once     = !!binding.modifiers.once;
-          const isGroup  = !!binding.modifiers.group;
-          const effect   = (el.dataset.animate || 'fade-up').toLowerCase();
-          const step     = isGroup ? parseInt(el.dataset.stagger || '60', 10) : 0;
-
-          // One IntersectionObserver for this directive instance
-          const io = new IntersectionObserver((entries) => {
-            entries.forEach(({ isIntersecting, target }) => {
-              if (isIntersecting) {
-                target.classList.add('anim-in');
-                target.classList.remove('anim-init');
-                if (once) io.unobserve(target);
-              } else if (!once) {
-                target.classList.remove('anim-in');
-                target.classList.add('anim-init');
-              }
-            });
-          }, { threshold: 0.12, root: null, rootMargin: '0px 0px -10% 0px' });
-
-          // Prepare + observe a node safely (only once)
-          const prepAndObserve = (node, idx = 0) => {
-            if (!node || node.__animPrepared) return;
-            const nodeEff = (node.dataset.animate || effect).toLowerCase();
-            const delay   = node.dataset.delay ? parseInt(node.dataset.delay, 10) : idx * step;
-
-            node.classList.add('anim-t', 'anim-init', `fx-${nodeEff}`);
-            if (!node.style.transitionDelay) node.style.transitionDelay = `${delay}ms`;
-
-            node.__animPrepared = true;
-            io.observe(node);
-
-            // Immediate state if already in view
-            const r = node.getBoundingClientRect();
-            const inView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.1;
-            if (inView) { node.classList.add('anim-in'); node.classList.remove('anim-init'); }
-          };
-
-          // Initial registration
-          if (isGroup) {
-            const kids = el.querySelectorAll('[data-animate-child]');
-            kids.forEach((k, i) => prepAndObserve(k, i));
-          } else {
-            prepAndObserve(el, 0);
-          }
-
-          // Observe future children (critical for v-for content added after fetch)
-          if (isGroup) {
-            const mo = new MutationObserver((mutations) => {
-              mutations.forEach(m => {
-                m.addedNodes && m.addedNodes.forEach(n => {
-                  if (!(n instanceof Element)) return;
-                  if (n.matches && n.matches('[data-animate-child]')) {
-                    // index 0; visual stagger still looks fine on late nodes
-                    prepAndObserve(n, 0);
-                  }
-                  // Also handle descendants of a newly added subtree
-                  n.querySelectorAll && n.querySelectorAll('[data-animate-child]').forEach(d => prepAndObserve(d, 0));
-                });
-              });
-            });
-            mo.observe(el, { childList: true, subtree: true });
-            el.__animMO = mo;
-          }
-
-          // Keep references for cleanup
-          el.__animIO = io;
-
-          // Nudge the IO on load/resize/scroll to resolve initial state
-          const poke = () => io.takeRecords().forEach(({ target }) => io.observe(target));
-          window.addEventListener('resize', poke, { passive: true });
-          window.addEventListener('scroll', poke, { passive: true });
-          el.__animPoke = poke;
-        },
-
-        unmounted(el) {
-          el.__animIO?.disconnect();
-          el.__animMO?.disconnect();
-          window.removeEventListener('resize', el.__animPoke || (()=>{}));
-          window.removeEventListener('scroll', el.__animPoke || (()=>{}));
+      const handleJsonDrop = (event) => {
+        dragOver.value = false;
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+          processJsonFile(files[0]);
         }
-      }
+      };
+
+      const processJsonFile = (file) => {
+        if (!file.name.toLowerCase().endsWith('.json')) {
+          errorMessage.value = 'Please select a valid JSON file';
+          return;
+        }
+
+        jsonFileName.value = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            jsonData.value = JSON.parse(e.target.result);
+            errorMessage.value = '';
+          } catch (error) {
+            errorMessage.value = 'Invalid JSON format';
+            jsonData.value = null;
+            jsonFileName.value = '';
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      const handlePhotoFile = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          processPhotoFile(file);
+        }
+      };
+
+      const handlePhotoDrop = (event) => {
+        photoDragOver.value = false;
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+          processPhotoFile(files[0]);
+        }
+      };
+
+      const processPhotoFile = (file) => {
+        if (!file.type.startsWith('image/')) {
+          errorMessage.value = 'Please select a valid image file';
+          return;
+        }
+
+        photoFileName.value = file.name;
+        photoData.value = file;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          photoPreview.value = e.target.result;
+          errorMessage.value = '';
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const generateCV = () => {
+        if (!jsonData.value || !photoData.value) return;
+
+        cv.value = jsonData.value;
+        cvGenerated.value = true;
+      };
+
+      const goBack = () => {
+        cvGenerated.value = false;
+      };
+
+      const exportPdf = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+          @media print {
+            @page { margin: 0 !important; size: A4; }
+            body::before, body::after, html::before, html::after { display: none !important; content: none !important; }
+            * { -webkit-print-color-adjust: exact !important; }
+          }
+        `;
+        document.head.appendChild(style);
+        
+        window.print();
+        
+        setTimeout(() => {
+          document.head.removeChild(style);
+        }, 1000);
+      };
+
+      return {
+        cvGenerated,
+        cv,
+        jsonData,
+        photoData,
+        photoPreview,
+        jsonFileName,
+        photoFileName,
+        dragOver,
+        photoDragOver,
+        errorMessage,
+        handleJsonFile,
+        handleJsonDrop,
+        handlePhotoFile,
+        handlePhotoDrop,
+        generateCV,
+        goBack,
+        exportPdf
+      };
     }
   }).mount('#app');
-</script>
-
-
-
+  </script>
 </body>
 </html>
